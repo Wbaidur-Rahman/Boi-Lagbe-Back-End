@@ -8,6 +8,7 @@
     "node": true
   },
   "rules": {
+    "comma-dangle": 0,
     "no-console": 0,
     "indent": 0,
     "linebreak-style": 0,

@@ -16,10 +16,10 @@ const cookieParser = require('cookie-parser');
 
 // internel imports
 const { notFoundHandler, errorHandler } = require('./middlewires/common/errorHandler');
-const defaultRouter = require('./router/defaultRouter');
-const loginRouter = require('./router/loginRouter');
-const userRouter = require('./router/userRouter');
-const bookRouter = require('./router/bookRouter');
+const defaultRouter = require('./routers/defaultRouter');
+const loginRouter = require('./routers/loginRouter');
+const userRouter = require('./routers/userRouter');
+const bookRouter = require('./routers/bookRouter');
 
 const app = express();
 dotenv.config();
