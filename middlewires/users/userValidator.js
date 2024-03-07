@@ -24,10 +24,13 @@ const addUserValidators = [
                     throw createError('Email already is in use!');
                 }
             } catch (err) {
+                // throw createError('Error finding email');
                 throw createError(err.message);
             }
         }),
+
     check('mobile')
+        .optional({ nullable: true })
         .isMobilePhone('bn-BD', {
             strictMode: false,
         })
@@ -45,7 +48,7 @@ const addUserValidators = [
     check('password')
         .isStrongPassword()
         .withMessage(
-            'Password must be at least 8 characters long & should contain at least 1 lowercase, 1 uppercase, 1 number & 1 symbol'
+            'Password must be at least 8 characters long should contain at least 1 lowercase, 1 uppercase, 1 number & 1 symbol'
         ),
 ];
 
@@ -64,7 +67,7 @@ const addUserValidationHandler = (req, res, next) => {
         next();
     } else {
         // remove uploaded files
-        if (req.files.length > 0) {
+        if (req.files && req.files.length > 0) {
             const { filename } = req.files[0];
             unlink(path.join(__dirname, `/../../public/uploads/avatars/${filename}`), (err) => {
                 if (err) console.log(err);

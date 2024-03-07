@@ -24,6 +24,15 @@ const bookRouter = require('./routers/bookRouter');
 const app = express();
 dotenv.config();
 
+// Enable CORS for all routes
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    next();
+});
+
 // database connection
 mongoose
     .connect(process.env.MONGO_CONNECTION_STRING)

@@ -11,7 +11,7 @@ function errorHandler(err, req, res, next) {
 
     res.status(err.status || 500);
 
-    console.log(err.status);
+    console.log('From common error Handler', err);
     res.json(err);
     next();
 }
