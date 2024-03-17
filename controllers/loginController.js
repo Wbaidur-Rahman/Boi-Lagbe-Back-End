@@ -15,7 +15,6 @@ async function login(req, res) {
 
         if (user && user._id) {
             isValidPassword = await bcrypt.compare(req.body.password, user.password);
-            console.log(isValidPassword);
         } else {
             throw createError('Login failed! Wrong email.');
         }
@@ -23,6 +22,7 @@ async function login(req, res) {
         if (isValidPassword) {
             //  prepare the user object to generate token
             const userObject = {
+                userid: user._id,
                 username: user.name,
                 email: user.email,
                 role: 'user',

@@ -23,6 +23,25 @@ const peopleSchema = mongoose.Schema(
         avatar: {
             type: String,
         },
+        address: {
+            type: String,
+            required: true,
+        },
+        books: [
+            {
+                type: String,
+            },
+        ],
+        adcartbooks: [
+            {
+                type: String,
+            },
+        ],
+        rentbooks: [
+            {
+                type: String,
+            },
+        ],
         role: {
             type: String,
             enum: ['admin', 'user'],
@@ -30,7 +49,7 @@ const peopleSchema = mongoose.Schema(
         },
     },
     {
-        timestamos: true,
+        timestamps: true,
     }
 );
 
