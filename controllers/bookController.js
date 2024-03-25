@@ -6,6 +6,25 @@ const { unlink } = require('fs');
 const Book = require('../models/book');
 const User = require('../models/people');
 
+//  getBooks by Category
+async function getBooksOnCategory(req, res) {
+    const { category } = req.params;
+    try {
+        const bookIds = await Book.find({ 'data.category': category }).select('_id');
+
+        res.status(200).json({ bookIds });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            errors: {
+                common: {
+                    msg: error.message,
+                },
+            },
+        });
+    }
+}
+
 // get an Book
 async function getBook(req, res) {
     try {
@@ -108,7 +127,7 @@ async function removeBook(req, res) {
         });
 
         // remove Book avatar if any
-        if (book.cover) {
+        if (book && book.cover) {
             // call unlink
             unlink(path.join(__dirname, `../public/uploads/book-covers/${book.cover}`), (err) => {
                 if (err) console.log(err);
@@ -134,4 +153,5 @@ module.exports = {
     addBook,
     removeBook,
     getBookCover,
+    getBooksOnCategory,
 };

@@ -38,16 +38,9 @@ async function login(req, res) {
                 signed: true,
             });
 
-            const cookie = {
-                name: process.env.COOKIE_NAME,
-                token,
-                maxAge: process.env.JWT_EXPIRY,
-            };
-
             res.status(200).json({
                 msg: 'Login Successful',
                 userObject,
-                cookie,
             });
         } else {
             throw createError('Login failed! Wrong Password.');

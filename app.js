@@ -15,6 +15,7 @@ const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 
 // internel imports
+const passport = require('passport');
 const { notFoundHandler, errorHandler } = require('./middlewires/common/errorHandler');
 const defaultRouter = require('./routers/defaultRouter');
 const loginRouter = require('./routers/loginRouter');
@@ -32,6 +33,12 @@ app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     next();
 });
+
+// Initialize and configure Passport
+require('./config/passport')(passport); // Assuming passport configuration is defined in a separate file
+
+// Middleware to initialize Passport
+app.use(passport.initialize());
 
 // database connection
 mongoose

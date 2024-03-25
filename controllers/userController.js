@@ -12,7 +12,7 @@ function getUserAvatar(req, res) {
         const avatarImagePath = path.join(__dirname, '..', 'public', 'uploads', 'avatars', avatar);
         res.sendFile(avatarImagePath);
     } catch (error) {
-        console.log(error);
+        // console.log(error);
         res.send(error);
     }
 }
@@ -129,6 +129,8 @@ async function updateUser(req, res) {
         if (req.body.rentbooks) {
             updatedUser.rentbooks = req.body.rentbooks;
         }
+
+        // console.log(req.body);
 
         // Save the updated user
         await updatedUser.save();
