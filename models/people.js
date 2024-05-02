@@ -44,9 +44,24 @@ const peopleSchema = mongoose.Schema(
         ],
         role: {
             type: String,
-            enum: ['admin', 'user'],
+            enum: ['admin', 'user', 'agent'],
             default: 'user',
         },
+        rentrequests: [
+            {
+                type: String,
+            },
+        ],
+        notifications: [
+            {
+                type: String,
+            },
+        ],
+        rents: [
+            {
+                type: String,
+            },
+        ],
     },
     {
         timestamps: true,

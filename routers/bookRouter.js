@@ -7,6 +7,7 @@ const {
     removeBook,
     getBookCover,
     getBooksOnCategory,
+    updateBook,
 } = require('../controllers/bookController');
 const {
     addBookValidators,
@@ -21,6 +22,8 @@ router.get('/', getBook);
 router.get('/categories/:category', getBooksOnCategory);
 
 router.get('/book-covers/:coverImage', getBookCover);
+
+router.put('/:id', updateBook);
 
 router.post('/', bookCoverUpload, addBookValidators, addBookValidationHandler, addBook);
 

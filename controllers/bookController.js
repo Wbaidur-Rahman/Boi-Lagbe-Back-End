@@ -77,20 +77,35 @@ function getBookCover(req, res) {
 
 // add Book
 async function addBook(req, res) {
-    const newBook = new Book({
-        ...req.body,
-        cover: req.files[0].filename,
+    // here at first i should find out wheather the book is already in db or not
+    let book = await Book.findOne({
+        title: { $regex: new RegExp(req.body.title, 'i') },
+        'data.author': { $regex: new RegExp(req.body.data.author, 'i') },
     });
+
+    // if the book is not in database
+    if (!book) {
+        book = new Book({
+            ...req.body,
+            cover: req.files[0].filename,
+        });
+    }
+
+    // now add the tag for ownerid and availability in tags array
+    if (!book.tags) {
+        book.tags = [];
+    }
+    book.tags.push({ ownerid: req.body.ownerid, isAvailable: true });
 
     // save Book or send error
     try {
-        await newBook.save();
+        await book.save();
 
         // Find the user based on ownerid
         const user = await User.findOne({ _id: req.body.ownerid });
 
         // Push the new book ID into the books array of the user
-        user.books.push(newBook._id);
+        user.books.push(book._id);
 
         // Save the user document
         await user.save();
@@ -100,14 +115,11 @@ async function addBook(req, res) {
         });
     } catch (err) {
         console.log(err); // here I have a console.log()
-        if (newBook.cover) {
+        if (book.cover) {
             // call unlink
-            unlink(
-                path.join(__dirname, `../public/uploads/book-covers/${newBook.cover}`),
-                (err1) => {
-                    if (err1) console.log(err1);
-                }
-            );
+            unlink(path.join(__dirname, `../public/uploads/book-covers/${book.cover}`), (err1) => {
+                if (err1) console.log(err1);
+            });
         }
         res.status(500).json({
             errors: {
@@ -148,10 +160,37 @@ async function removeBook(req, res) {
     }
 }
 
+// update a book
+async function updateBook(req, res) {
+    try {
+        const book = await Book.findOne({
+            _id: req.params.id,
+        });
+
+        book.isAvailable = req.body.isAvailable;
+
+        await book.save();
+
+        res.status(200).json({
+            msg: 'Book was updated successfully',
+        });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({
+            errors: {
+                common: {
+                    msg: 'Could not updtae the Book!',
+                },
+            },
+        });
+    }
+}
+
 module.exports = {
     getBook,
     addBook,
     removeBook,
     getBookCover,
     getBooksOnCategory,
+    updateBook,
 };

@@ -129,6 +129,18 @@ async function updateUser(req, res) {
         if (req.body.rentbooks) {
             updatedUser.rentbooks = req.body.rentbooks;
         }
+        if (req.body.rentrequests) {
+            updatedUser.rentrequests = req.body.rentrequests;
+        }
+        if (req.body.notifications) {
+            updatedUser.notifications = req.body.notifications;
+        }
+        if (req.body.rents) {
+            updatedUser.rents = req.body.rents;
+        }
+        if (req.body.mobile) {
+            updatedUser.mobile = req.body.mobile;
+        }
 
         // console.log(req.body);
 

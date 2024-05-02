@@ -21,6 +21,10 @@ const defaultRouter = require('./routers/defaultRouter');
 const loginRouter = require('./routers/loginRouter');
 const userRouter = require('./routers/userRouter');
 const bookRouter = require('./routers/bookRouter');
+const rentRouter = require('./routers/rentRouter');
+const rentRequestRouter = require('./routers/rentRequestRouter');
+const notificationRouter = require('./routers/notificationRouter');
+const adminRouter = require('./routers/adminRouter');
 
 const app = express();
 dotenv.config();
@@ -58,6 +62,10 @@ app.use('/', defaultRouter);
 app.use('/login', loginRouter);
 app.use('/users', userRouter);
 app.use('/books', bookRouter);
+app.use('/rents', rentRouter);
+app.use('/rentrequest', rentRequestRouter);
+app.use('/notification', notificationRouter);
+app.use('/admin', adminRouter);
 
 // error handling
 // 404 not Found handler

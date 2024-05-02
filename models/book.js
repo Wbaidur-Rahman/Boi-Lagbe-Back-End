@@ -38,10 +38,6 @@ const bookSchema = mongoose.Schema(
                 type: String,
             },
         },
-        ownerid: {
-            type: String,
-            required: true,
-        },
         reviews: [
             {
                 reviewer: {
@@ -52,10 +48,18 @@ const bookSchema = mongoose.Schema(
                 },
             },
         ],
-        isAvailable: {
-            type: Boolean,
-            default: true,
-        },
+        tags: [
+            {
+                ownerid: {
+                    type: String,
+                    required: true,
+                },
+                isAvailable: {
+                    type: Boolean,
+                    default: true,
+                },
+            },
+        ],
     },
     {
         timestamps: true,
