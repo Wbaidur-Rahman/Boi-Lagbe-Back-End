@@ -52,6 +52,11 @@ const peopleSchema = mongoose.Schema(
                 type: String,
             },
         ],
+        sentreqs: [
+            {
+                type: String,
+            },
+        ],
         notifications: [
             {
                 type: String,
@@ -62,6 +67,10 @@ const peopleSchema = mongoose.Schema(
                 type: String,
             },
         ],
+        collateral: {
+            type: String,
+            default: '0',
+        },
     },
     {
         timestamps: true,

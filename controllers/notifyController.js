@@ -80,9 +80,8 @@ async function removeNotification(req, res) {
         });
 
         const user = await User.findOne({ _id: notification.ownerid });
-        user.notifications = user.notifications.map(
-            (notificationid) => notificationid !== notification._id
-        );
+
+        user.notifications = await user.notifications.filter((id) => id !== req.params.id);
         await user.save();
 
         res.status(200).json({

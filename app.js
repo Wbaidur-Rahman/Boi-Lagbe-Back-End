@@ -25,6 +25,7 @@ const rentRouter = require('./routers/rentRouter');
 const rentRequestRouter = require('./routers/rentRequestRouter');
 const notificationRouter = require('./routers/notificationRouter');
 const adminRouter = require('./routers/adminRouter');
+const reviewRouter = require('./routers/reviewRouter');
 
 const app = express();
 dotenv.config();
@@ -66,6 +67,7 @@ app.use('/rents', rentRouter);
 app.use('/rentrequest', rentRequestRouter);
 app.use('/notification', notificationRouter);
 app.use('/admin', adminRouter);
+app.use('/reviews', reviewRouter);
 
 // error handling
 // 404 not Found handler

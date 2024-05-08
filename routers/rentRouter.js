@@ -1,7 +1,7 @@
 const express = require('express');
 
 const { getRent, addRent } = require('../controllers/rentController');
-// const { updateRent, removeRent } = require('../controllers/rentController');
+const { removeRent, updateRent } = require('../controllers/rentController');
 
 const {
     addRentValidators,
@@ -14,8 +14,8 @@ router.get('/', getRent);
 
 router.post('/', addRentValidators, addRentValidationHandler, addRent);
 
-// router.put('/:id', updateRent);
+router.put('/:id', updateRent);
 
-// router.delete('/:id', removeRent);
+router.delete('/:id', removeRent);
 
 module.exports = router;

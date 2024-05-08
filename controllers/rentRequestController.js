@@ -66,11 +66,22 @@ async function addRentRequest(req, res) {
             user.rentrequests.push(rentrequest._id);
         }
 
-        // // Push the new book ID into the books array of the user
-        // user.rentrequests.push(rentrequest._id);
-
         // Save the user document
         await user.save();
+
+        // Find the user based on borrowerid
+        const user1 = await User.findOne({ _id: req.body.borrowerid });
+
+        if (!user1.sentreqs) user1.sentreqs = [];
+
+        // Check if the rent request ID is already in the user1's rent requests array
+        if (!user1.sentreqs.includes(rentrequest._id)) {
+            // If not present, push it into the array
+            user1.sentreqs.push(rentrequest._id);
+        }
+
+        // Save the user1 document
+        await user1.save();
 
         res.status(200).json({
             msg: 'Rentrequest was added successfully',

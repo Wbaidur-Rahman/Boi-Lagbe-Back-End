@@ -93,8 +93,6 @@ async function addRent(req, res) {
             await deleteRentReqs(rentreqid, rent, dels);
         }
 
-        console.log('dels : ====================================', dels);
-
         // Filter out the values of dels array from owner.rentrequests
         owner.rentrequests = await owner.rentrequests.filter(
             (rentreqid) => !dels.includes(rentreqid)
@@ -112,6 +110,9 @@ async function addRent(req, res) {
 
         // saving the rent info
         await rent.save();
+
+        // saving the book
+        await book.save();
 
         // updating the agent
         await agent.save();
@@ -131,103 +132,80 @@ async function addRent(req, res) {
     }
 }
 
-// update user
-// async function updateUser(req, res) {
-//     const { id } = req.params;
+// remove Rent
+async function removeRent(req, res) {
+    try {
+        const rent = await Rent.findByIdAndDelete({
+            _id: req.params.id,
+        });
 
-//     try {
-//         const updatedUser = await User.findById(id);
+        // removing the rent from agent
+        let user = await User.findOne({ _id: rent.agentid });
 
-//         if (!updatedUser) {
-//             res.status(404).json({
-//                 errors: {
-//                     common: {
-//                         msg: 'User not found',
-//                     },
-//                 },
-//             });
-//         }
+        user.rents = await user.rents.filter((id) => id !== req.params.id);
+        await user.save();
 
-//         // Update only the fields that are present in the request body
-//         if (req.body.name) {
-//             updatedUser.name = req.body.name;
-//         }
-//         if (req.files && req.files.length > 0) {
-//             updatedUser.avatar = req.files[0].filename;
-//         }
-//         // if (req.body.mobile) {
-//         //     updatedUser.mobile = req.body.mobile;
-//         // }
-//         if (req.body.address) {
-//             updatedUser.address = req.body.address;
-//         }
-//         if (req.body.password) {
-//             if (req.body.password.length < 20) {
-//                 updatedUser.password = await bcrypt.hash(req.body.password, 10);
-//             } else updatedUser.password = req.body.password;
-//         }
+        // removing the book from borrower rentbooks list
+        user = await User.findOne({ _id: rent.borrowerid });
 
-//         if (req.body.books) {
-//             updatedUser.books = req.body.books;
-//         }
-//         if (req.body.adcartbooks) {
-//             updatedUser.adcartbooks = req.body.adcartbooks;
-//         }
-//         if (req.body.rentbooks) {
-//             updatedUser.rentbooks = req.body.rentbooks;
-//         }
+        user.rentbooks = await user.rentbooks.filter((id) => id !== rent.bookid);
+        await user.save();
 
-//         // console.log(req.body);
+        const book = await Book.findOne({ _id: rent.bookid });
 
-//         // Save the updated user
-//         await updatedUser.save();
+        // the book is now available so update the tag of the book
+        const index = await book.tags.findIndex((tag) => tag.ownerid === rent.ownerid);
 
-//         res.status(200).json({
-//             msg: 'User updated successfully',
-//             user: updatedUser,
-//         });
-//     } catch (error) {
-//         console.log(error);
-//         res.status(500).json({
-//             errors: {
-//                 common: {
-//                     msg: 'Could not update the user',
-//                 },
-//             },
-//         });
-//     }
-// }
+        if (index !== -1) {
+            // Modify the tag at the found index
+            book.tags[index].isAvailable = true;
+        } else {
+            // Tag not found
+            console.log('Tag not found');
+        }
 
-// remove user
-// async function removeUser(req, res) {
-//     try {
-//         const user = await User.findByIdAndDelete({
-//             _id: req.params.id,
-//         });
+        await book.save();
 
-//         // remove user avatar if any
-//         if (user.avatar) {
-//             // call unlink
-//             unlink(path.join(__dirname, `../public/uploads/avatars/${user.avatar}`), (err) => {
-//                 if (err) console.log(err);
-//             });
-//         }
-//         res.status(200).json({
-//             msg: 'User was removed successfully',
-//         });
-//     } catch (err) {
-//         console.log(err);
-//         res.status(500).json({
-//             errors: {
-//                 common: {
-//                     msg: 'Could not delete the user!',
-//                 },
-//             },
-//         });
-//     }
-// }
+        res.status(200).json({
+            msg: 'Rent was removed successfully',
+        });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({
+            errors: {
+                common: {
+                    msg: 'Could not delete the user!',
+                },
+            },
+        });
+    }
+}
+
+// update Rent
+async function updateRent(req, res) {
+    try {
+        const rent = await Rent.findOne({ _id: req.params.id });
+        rent.notified = true;
+        await rent.save();
+
+        res.status(200).json({
+            msg: 'Rent updated successfully',
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            errors: {
+                common: {
+                    msg: 'Could not update the rent',
+                },
+            },
+        });
+    }
+}
 
 module.exports = {
     getRent,
     addRent,
+    removeRent,
+    updateRent,
 };

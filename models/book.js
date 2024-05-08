@@ -22,7 +22,7 @@ const bookSchema = mongoose.Schema(
             },
             category: {
                 type: String,
-                enum: ['academic', 'poem', 'nobel', 'gk', 'others'],
+                enum: ['academic', 'poem', 'novel', 'gk', 'others'],
                 default: 'others',
             },
             genre: {
@@ -41,6 +41,9 @@ const bookSchema = mongoose.Schema(
         reviews: [
             {
                 reviewer: {
+                    type: String,
+                },
+                rating: {
                     type: String,
                 },
                 comment: {
