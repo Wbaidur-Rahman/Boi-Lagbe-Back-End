@@ -1,31 +1,31 @@
-const { check, query, validationResult } = require('express-validator');
+const { check, validationResult } = require('express-validator');
 const createError = require('http-errors');
 const path = require('path');
 const { unlink } = require('fs');
 
 const User = require('../../models/people');
 
-const addUserIdValidator = [
-    query('id')
-        .isLength({
-            min: 24,
-            max: 24,
-        })
-        .withMessage('Invalid User Id'),
-];
+// const addUserIdValidator = [
+//     query('id')
+//         .isLength({
+//             min: 24,
+//             max: 24,
+//         })
+//         .withMessage('Invalid User Id'),
+// ];
 
-const addUserIdValidationHandler = (req, res, next) => {
-    const errors = validationResult(req);
-    const mappedErrors = errors.mapped();
+// const addUserIdValidationHandler = (req, res, next) => {
+//     const errors = validationResult(req);
+//     const mappedErrors = errors.mapped();
 
-    if (Object.keys(mappedErrors).length === 0) {
-        next();
-    } else {
-        res.status(403).json({
-            errors: mappedErrors,
-        });
-    }
-};
+//     if (Object.keys(mappedErrors).length === 0) {
+//         next();
+//     } else {
+//         res.status(403).json({
+//             errors: mappedErrors,
+//         });
+//     }
+// };
 
 // for adding user purpose
 const addUserValidators = [
@@ -172,8 +172,8 @@ const updateUserValidationHandler = (req, res, next) => {
 module.exports = {
     addUserValidators,
     addUserValidationHandler,
-    addUserIdValidator,
-    addUserIdValidationHandler,
+    // addUserIdValidator,
+    // addUserIdValidationHandler,
     updateUserValidators,
     updateUserValidationHandler,
 };

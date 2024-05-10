@@ -9,6 +9,9 @@ const {
     getBooksOnCategory,
     updateBook,
 } = require('../controllers/bookController');
+
+const authenticateUser = require('../middlewires/auth/authenticateUser');
+
 const {
     addBookValidators,
     addBookValidationHandler,
@@ -23,9 +26,16 @@ router.get('/categories/:category', getBooksOnCategory);
 
 router.get('/book-covers/:coverImage', getBookCover);
 
-router.put('/:id', updateBook);
+router.put('/:id', authenticateUser, updateBook);
 
-router.post('/', bookCoverUpload, addBookValidators, addBookValidationHandler, addBook);
+router.post(
+    '/',
+    authenticateUser,
+    bookCoverUpload,
+    addBookValidators,
+    addBookValidationHandler,
+    addBook
+);
 
 router.delete('/:id', removeBook);
 

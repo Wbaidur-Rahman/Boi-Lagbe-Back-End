@@ -20,7 +20,7 @@ function getUserAvatar(req, res) {
 // get an user
 async function getUser(req, res) {
     try {
-        const user = await User.findOne({ _id: req.query.id });
+        const user = await User.findOne({ _id: req.user.userid });
 
         if (user && user._id) {
             res.status(200).json({

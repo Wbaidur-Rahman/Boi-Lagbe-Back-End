@@ -11,8 +11,6 @@ const avatarUpload = require('../middlewires/users/avatarUpload');
 const {
     addUserValidators,
     addUserValidationHandler,
-    addUserIdValidator,
-    addUserIdValidationHandler,
     updateUserValidators,
     updateUserValidationHandler,
 } = require('../middlewires/users/userValidator');
@@ -29,7 +27,7 @@ router.get('/logout', authenticateUser, (req, res) => {
     res.end();
 });
 
-router.get('/', authenticateUser, addUserIdValidator, addUserIdValidationHandler, getUser);
+router.get('/', authenticateUser, getUser);
 
 router.get('/avatar/:avatar', authenticateUser, getUserAvatar);
 
