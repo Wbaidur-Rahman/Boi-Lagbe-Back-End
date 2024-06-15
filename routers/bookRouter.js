@@ -8,6 +8,8 @@ const {
     getBookCover,
     getBooksOnCategory,
     updateBook,
+    getBooksOnSearch,
+    getBooksOnLatest,
 } = require('../controllers/bookController');
 
 const authenticateUser = require('../middlewires/auth/authenticateUser');
@@ -23,6 +25,8 @@ const router = express.Router();
 router.get('/', getBook);
 
 router.get('/categories/:category', getBooksOnCategory);
+router.get('/search/:searchString', getBooksOnSearch);
+router.get('/latest', getBooksOnLatest);
 
 router.get('/book-covers/:coverImage', getBookCover);
 
@@ -37,6 +41,6 @@ router.post(
     addBook
 );
 
-router.delete('/:id', removeBook);
+router.delete('/:bookid/:userid', removeBook);
 
 module.exports = router;

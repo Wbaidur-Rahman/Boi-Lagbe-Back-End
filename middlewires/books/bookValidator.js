@@ -55,7 +55,7 @@ const addBookValidators = [
     check('data.category')
         .optional()
         .toLowerCase()
-        .isIn(['academic', 'poem', 'nobel', 'gk', 'others'])
+        .isIn(['academic', 'poem', 'novel', 'gk', 'others'])
         .withMessage('Invalid category'),
 
     check('data.author').trim().notEmpty().withMessage('Author is required'),

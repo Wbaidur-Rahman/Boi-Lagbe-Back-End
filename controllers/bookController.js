@@ -6,11 +6,51 @@ const { unlink } = require('fs');
 const Book = require('../models/book');
 const User = require('../models/people');
 
+//  getBooks by Latest
+async function getBooksOnLatest(req, res) {
+    try {
+        const bookIds = await Book.find().sort({ createdAt: -1 }).limit(15);
+
+        res.status(200).json({ bookIds });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            errors: {
+                common: {
+                    msg: error.message,
+                },
+            },
+        });
+    }
+}
 //  getBooks by Category
 async function getBooksOnCategory(req, res) {
     const { category } = req.params;
     try {
         const bookIds = await Book.find({ 'data.category': category }).select('_id');
+
+        res.status(200).json({ bookIds });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            errors: {
+                common: {
+                    msg: error.message,
+                },
+            },
+        });
+    }
+}
+
+async function getBooksOnSearch(req, res) {
+    const { searchString } = req.params;
+    try {
+        // Constructing the regular expression for search
+        const regex = new RegExp(searchString, 'i'); // "i" flag for case-insensitive search
+
+        const bookIds = await Book.find({
+            $or: [{ title: { $regex: regex } }, { 'data.author': { $regex: regex } }],
+        }).select('_id');
 
         res.status(200).json({ bookIds });
     } catch (error) {
@@ -131,23 +171,42 @@ async function addBook(req, res) {
     }
 }
 
-// remove Book
+// remove Book should be updated
 async function removeBook(req, res) {
     try {
-        const book = await Book.findByIdAndDelete({
-            _id: req.params.id,
+        const { userid } = req.params;
+        const { bookid } = req.params;
+
+        const book = await Book.findOne({
+            _id: bookid,
         });
 
-        // remove Book avatar if any
-        if (book && book.cover) {
-            // call unlink
-            unlink(path.join(__dirname, `../public/uploads/book-covers/${book.cover}`), (err) => {
-                if (err) console.log(err);
+        if (book.tags.length >= 1) {
+            book.tags = book.tags.filter((tag) => tag.ownerid !== userid);
+            await book.save();
+
+            res.status(200).json({
+                msg: 'Book tag removed',
+            });
+        } else {
+            await Book.findByIdAndDelete({
+                _id: bookid,
+            });
+
+            // remove Book avatar if any
+            if (book && book.cover) {
+                // call unlink
+                unlink(
+                    path.join(__dirname, `../public/uploads/book-covers/${book.cover}`),
+                    (err) => {
+                        if (err) console.log(err);
+                    }
+                );
+            }
+            res.status(200).json({
+                msg: 'Book was removed successfully',
             });
         }
-        res.status(200).json({
-            msg: 'Book was removed successfully',
-        });
     } catch (err) {
         console.log(err);
         res.status(500).json({
@@ -192,5 +251,7 @@ module.exports = {
     removeBook,
     getBookCover,
     getBooksOnCategory,
+    getBooksOnSearch,
     updateBook,
+    getBooksOnLatest,
 };
