@@ -7,7 +7,17 @@ const rentSchema = mongoose.Schema(
             required: true,
             trim: true,
         },
+        borrower_name: {
+            type: String,
+        },
         borrowerphone: {
+            type: String,
+            required: true,
+        },
+        borrower_email: {
+            type: String,
+        },
+        borrower_address: {
             type: String,
             required: true,
         },
@@ -16,7 +26,17 @@ const rentSchema = mongoose.Schema(
             required: true,
             trim: true,
         },
+        owner_name: {
+            type: String,
+        },
         ownerphone: {
+            type: String,
+            required: true,
+        },
+        owner_email: {
+            type: String,
+        },
+        owner_address: {
             type: String,
             required: true,
         },
@@ -48,6 +68,10 @@ const rentSchema = mongoose.Schema(
             required: true,
         },
         notified: {
+            type: Boolean,
+            default: false,
+        },
+        payment_status: {
             type: Boolean,
             default: false,
         },

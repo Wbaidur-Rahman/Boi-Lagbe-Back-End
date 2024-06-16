@@ -108,6 +108,11 @@ async function addRent(req, res) {
         // add the rent to an agent
         agent.rents.push(rent._id);
 
+        // adding owner info to rent
+        rent.owner_name = owner.name;
+        rent.owner_email = owner.email;
+        rent.owner_address = owner.address;
+
         // saving the rent info
         await rent.save();
 

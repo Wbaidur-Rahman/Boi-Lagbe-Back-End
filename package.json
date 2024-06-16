@@ -24,6 +24,7 @@
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
     "react-redux": "^9.1.2",
+    "sslcommerz-lts": "^1.1.0",
     "validator": "^13.11.0"
   },
   "devDependencies": {

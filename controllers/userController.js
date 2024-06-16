@@ -48,6 +48,38 @@ async function getUser(req, res) {
     }
 }
 
+// get a Specific user with providing user id
+async function getSpecificUser(req, res) {
+    const { id } = req.params;
+    try {
+        const user = await User.findOne({ _id: id });
+
+        if (user && user._id) {
+            res.status(200).json({
+                user,
+            });
+        } else {
+            // throw createError('Unknown error while reading data');
+            res.status(404).json({
+                errors: {
+                    common: {
+                        msg: 'No user found',
+                    },
+                },
+            });
+        }
+    } catch (error) {
+        // console.log('Error is :', error);
+        res.status(500).json({
+            errors: {
+                common: {
+                    msg: error.message,
+                },
+            },
+        });
+    }
+}
+
 // add user
 async function addUser(req, res) {
     let newUser;
@@ -87,6 +119,7 @@ async function addUser(req, res) {
 // update user
 async function updateUser(req, res) {
     const { id } = req.params;
+    console.log(id);
 
     try {
         const updatedUser = await User.findById(id);
@@ -141,6 +174,7 @@ async function updateUser(req, res) {
         if (req.body.mobile) {
             updatedUser.mobile = req.body.mobile;
         }
+        console.log(req.body);
 
         // console.log(req.body);
 
@@ -194,6 +228,7 @@ async function removeUser(req, res) {
 
 module.exports = {
     getUserAvatar,
+    getSpecificUser,
     getUser,
     addUser,
     updateUser,

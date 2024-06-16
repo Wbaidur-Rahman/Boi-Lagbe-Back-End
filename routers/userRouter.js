@@ -2,6 +2,7 @@ const express = require('express');
 
 const {
     getUser,
+    getSpecificUser,
     addUser,
     updateUser,
     removeUser,
@@ -28,6 +29,7 @@ router.get('/logout', authenticateUser, (req, res) => {
 });
 
 router.get('/', authenticateUser, getUser);
+router.get('/:id', authenticateUser, getSpecificUser);
 
 router.get('/avatar/:avatar', authenticateUser, getUserAvatar);
 
