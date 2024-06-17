@@ -5,6 +5,7 @@ const { unlink } = require('fs');
 
 const Book = require('../models/book');
 const User = require('../models/people');
+const Warhouse = require('../models/warhouse');
 
 //  getBooks by Latest
 async function getBooksOnLatest(req, res) {
@@ -149,6 +150,21 @@ async function addBook(req, res) {
 
         // Save the user document
         await user.save();
+
+        // request to store a book
+        const warhouse = await Warhouse.findOne({name: "BoiLagbeWarHouse"});
+        const store_reqs = {
+            bookid: book._id,
+            title: book.title,
+            author: book.data.author,
+            ownerid: user._id,
+            owner: user.name,
+            address: user.address,
+            mobile: user.mobile,
+        };
+        warhouse.store_reqs?.push(store_reqs);
+        await warhouse.save();
+
 
         res.status(200).json({
             msg: 'Book was added successfully',

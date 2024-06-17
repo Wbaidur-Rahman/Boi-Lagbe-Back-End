@@ -61,6 +61,10 @@ const bookSchema = mongoose.Schema(
                     type: Boolean,
                     default: true,
                 },
+                isStored: {
+                    type: Boolean,
+                    default: false,
+                },
             },
         ],
     },

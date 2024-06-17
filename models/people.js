@@ -62,6 +62,7 @@ const peopleSchema = mongoose.Schema(
                 type: String,
             },
         ],
+        // for agent part
         rents: [
             {
                 type: String,

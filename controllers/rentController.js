@@ -68,7 +68,7 @@ async function addRent(req, res) {
             res.status(404).json({
                 errors: {
                     common: {
-                        msg: 'Agent or Owner or Borrower or owner not found',
+                        msg: 'Agent or Book or Owner or Borrower not found',
                     },
                 },
             });
