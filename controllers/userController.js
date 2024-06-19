@@ -119,7 +119,7 @@ async function addUser(req, res) {
 // update user
 async function updateUser(req, res) {
     const { id } = req.params;
-    console.log(id);
+    // console.log(id);
 
     try {
         const updatedUser = await User.findById(id);
@@ -174,7 +174,7 @@ async function updateUser(req, res) {
         if (req.body.mobile) {
             updatedUser.mobile = req.body.mobile;
         }
-        console.log(req.body);
+        // console.log(req.body);
 
         // console.log(req.body);
 

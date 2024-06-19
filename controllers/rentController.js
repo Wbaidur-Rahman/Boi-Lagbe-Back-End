@@ -37,7 +37,7 @@ async function getRent(req, res) {
     }
 }
 
-// deleting the rent requests for the rented book
+// deleting the rent requests for the rented book    ***** no use in updated code ******
 async function deleteRentReqs(rentreqid, rent, dels) {
     try {
         const rentreq = await RentRequest.findOne({ _id: rentreqid });
@@ -51,7 +51,7 @@ async function deleteRentReqs(rentreqid, rent, dels) {
     }
 }
 
-// purpose is to add rentinfo to db
+// // purpose is to add rentinfo to db   ***** no use in updated code ******
 async function addRent(req, res) {
     const rent = new Rent({
         ...req.body,
@@ -137,7 +137,12 @@ async function addRent(req, res) {
     }
 }
 
-// remove Rent
+// remove Rent when book is received
+/*
+ * removing the rent from agent
+ * removing the book from borrower rentbooks list
+ * the book is now available so update the tag of the book
+ */
 async function removeRent(req, res) {
     try {
         const rent = await Rent.findByIdAndDelete({
@@ -179,14 +184,44 @@ async function removeRent(req, res) {
         res.status(500).json({
             errors: {
                 common: {
-                    msg: 'Could not delete the user!',
+                    msg: 'Could not delete the rent!',
                 },
             },
         });
     }
 }
 
-// update Rent
+// Now remmoving some specific rent if it is cancelled
+async function removeCancelledRent(req, res) {
+    try {
+        const rents = await Rent.find({status: "cancelled"});
+        const agent = await User.findOne({_id: rents[0].agentid});
+        const rentids = rents.map((rent) => rent._id.valueOf());
+
+        agent.rents = agent.rents.filter((rentid)=> !rentids.includes(rentid));
+
+        for(let rentid of rentids){    
+            await Rent.findByIdAndDelete({_id: rentid});
+        }
+
+        await agent.save();
+
+        res.status(200).json({
+            rentids,
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            errors: {
+                common: {
+                    msg: "Unkknown error occured",
+                }
+            }
+        })
+    }
+}
+
+// update Rent ** notified only ** 
 async function updateRent(req, res) {
     try {
         const rent = await Rent.findOne({ _id: req.params.id });
@@ -209,6 +244,7 @@ async function updateRent(req, res) {
 }
 
 module.exports = {
+    removeCancelledRent,
     getRent,
     addRent,
     removeRent,

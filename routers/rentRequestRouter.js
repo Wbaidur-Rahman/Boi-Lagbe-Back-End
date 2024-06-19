@@ -1,6 +1,8 @@
 const express = require('express');
 
 const {
+    acceptRentRequest,
+    cancelRentRequest,
     getRentRequest,
     addRentRequest,
     removeRentRequest,
@@ -16,6 +18,8 @@ const router = express.Router();
 router.get('/', getRentRequest);
 
 router.post('/', addRentRequestValidators, addRentRequestValidationHandler, addRentRequest);
+router.post('/accept', acceptRentRequest);
+router.post('/cancel', cancelRentRequest);
 
 router.delete('/:id', removeRentRequest);
 

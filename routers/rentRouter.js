@@ -1,6 +1,6 @@
 const express = require('express');
 
-const { getRent, addRent } = require('../controllers/rentController');
+const { getRent, addRent, removeCancelledRent } = require('../controllers/rentController');
 const { removeRent, updateRent } = require('../controllers/rentController');
 
 const {
@@ -13,6 +13,7 @@ const router = express.Router();
 router.get('/', getRent);
 
 router.post('/', addRentValidators, addRentValidationHandler, addRent);
+router.post('/removecancelled', removeCancelledRent)
 
 router.put('/:id', updateRent);
 

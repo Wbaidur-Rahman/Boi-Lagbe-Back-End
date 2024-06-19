@@ -71,9 +71,10 @@ const rentSchema = mongoose.Schema(
             type: Boolean,
             default: false,
         },
-        payment_status: {
-            type: Boolean,
-            default: false,
+        status: {
+            type: String,
+            enum: ["begin", "progress", "accepted", "cancelled"],
+            default: "begin",
         },
     },
     {

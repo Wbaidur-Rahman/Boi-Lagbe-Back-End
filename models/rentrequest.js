@@ -11,6 +11,10 @@ const rentRequestSchema = mongoose.Schema(
             type: String,
             required: true,
         },
+        author: {
+            type: String,
+            required: true,
+        },
         duration: {
             type: String,
             required: true,
@@ -22,16 +26,6 @@ const rentRequestSchema = mongoose.Schema(
         borrowerphone: {
             type: String,
         },
-        borrower_name: {
-            type: String,
-        },
-        borrower_email: {
-            type: String,
-        },
-        borrower_address: {
-            type: String,
-            required: true,
-        },
         amount: {
             type: String,
             required: true,
@@ -39,6 +33,9 @@ const rentRequestSchema = mongoose.Schema(
         ownerid: {
             type: String,
             required: true,
+        },
+        agentid: {
+            type: String,
         },
     },
     {

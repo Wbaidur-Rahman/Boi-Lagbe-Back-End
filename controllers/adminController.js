@@ -3,6 +3,65 @@ const Agent = require('../models/agents');
 const Warhouse = require('../models/warhouse');
 const Book = require('../models/book');
 
+const SSLCommerzPayment = require('sslcommerz-lts')
+
+function createRandomString(length){
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz";
+    let key = "";
+    while(length--){
+        key += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return key;
+}
+
+
+// function for paying user Collateral
+async function paycollateral(req, res){
+    const store_id = process.env.store_id
+    const store_passwd = process.env.store_passwd
+    const is_live = false //true for live, false for sandbox
+
+    const port = process.env.port
+    const tran_id = createRandomString(34);
+    console.log(tran_id);
+
+    try {
+    const user = req.body;
+    // console.log(user);
+    const data = {
+        total_amount: user.payamount,
+        currency: 'BDT',
+        tran_id, // use unique tran_id for each api call
+        success_url: 'http://localhost:5173/success',
+        fail_url: 'http://localhost:5173/fail',
+        cancel_url: 'http://localhost:5173/cancel',
+        ipn_url: 'http://localhost:5173/ipn',
+        cus_name: user.name,
+        cus_email: user.email,
+        cus_add1: user.address,
+        cus_country: 'Bangladesh',
+        cus_phone: user.mobile,
+    };
+    const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live)
+    sslcz.init(data).then(apiResponse => {
+        // Redirect the user to payment gateway
+        let GatewayPageURL = apiResponse.GatewayPageURL? apiResponse.GatewayPageURL:"http://localhost:5173/"
+        console.log('Redirecting to: ', GatewayPageURL)
+        res.status(200).json({
+            url: GatewayPageURL,
+        })
+    });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            errors: {
+                common: {
+                    msg: "Unknown error occured",
+                }
+            }
+        })
+    }
+}
 
 // function for storing book into warhouse
 async function storeBooksIntoWarhouse(req, res) {
@@ -229,6 +288,7 @@ async function removeAgent(req, res) {
 }
 
 module.exports = {
+    paycollateral,
     acknowledgeStoreRequests,
     getStoreRequests,
     createWarhouse,

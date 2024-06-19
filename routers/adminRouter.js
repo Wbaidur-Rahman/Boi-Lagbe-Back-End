@@ -1,6 +1,6 @@
 const express = require('express');
 
-const { getStoreRequests, acknowledgeStoreRequests, getAgent, addAgent, removeAgent, createWarhouse } = require('../controllers/adminController');
+const { getStoreRequests, acknowledgeStoreRequests, getAgent, addAgent, removeAgent, createWarhouse, paycollateral } = require('../controllers/adminController');
 const { agentValidators, agentValidationHandler } = require('../middlewires/admin/agentValidator');
 
 const router = express.Router();
@@ -9,6 +9,7 @@ const router = express.Router();
 router.get('/', getAgent);
 router.get('/storereqs', getStoreRequests);
 
+router.post('/paycollateral', paycollateral);
 router.post('/storereqs', acknowledgeStoreRequests);
 router.post('/warhouse', createWarhouse);
 router.post('/', agentValidators, agentValidationHandler, addAgent);
