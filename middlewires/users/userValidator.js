@@ -29,6 +29,7 @@ const User = require('../../models/people');
 
 // for adding user purpose
 const addUserValidators = [
+    
     check('name')
         .isLength({ min: 1 })
         .withMessage('Name is required')
@@ -53,11 +54,10 @@ const addUserValidators = [
         }),
 
     check('mobile')
-        .optional({ nullable: true })
         .isMobilePhone('bn-BD', {
             strictMode: false,
         })
-        .withMessage('Mobile number must be a valid Bangladeshi mobile number')
+        .withMessage('Mobile number must be a valid Bangladeshi number')
         .custom(async (value) => {
             try {
                 const user = await User.findOne({ mobile: value });
@@ -80,6 +80,8 @@ const addUserValidators = [
 const addUserValidationHandler = (req, res, next) => {
     const errors = validationResult(req);
     const mappedErrors = errors.mapped();
+
+    console.log(req.body.mobile);
 
     /* Now error structue is
         err: {

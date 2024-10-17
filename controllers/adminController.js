@@ -3,7 +3,8 @@ const Agent = require('../models/agents');
 const Warhouse = require('../models/warhouse');
 const Book = require('../models/book');
 
-const SSLCommerzPayment = require('sslcommerz-lts')
+const SSLCommerzPayment = require('sslcommerz-lts');
+
 
 function createRandomString(length){
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz";
@@ -15,54 +16,177 @@ function createRandomString(length){
 }
 
 
-// function for paying user Collateral
+/************************************
 async function paycollateral(req, res){
-    const store_id = process.env.store_id
-    const store_passwd = process.env.store_passwd
-    const is_live = false //true for live, false for sandbox
+    const store_id = process.env.store_id;
+    const store_passwd = process.env.store_passwd;
+    const is_live = false; // true for live, false for sandbox
 
-    const port = process.env.port
     const tran_id = createRandomString(34);
-    console.log(tran_id);
+    console.log('Generated tran_id:', tran_id);
 
     try {
-    const user = req.body;
-    // console.log(user);
-    const data = {
-        total_amount: user.payamount,
-        currency: 'BDT',
-        tran_id, // use unique tran_id for each api call
-        success_url: 'http://localhost:5173/success',
-        fail_url: 'http://localhost:5173/fail',
-        cancel_url: 'http://localhost:5173/cancel',
-        ipn_url: 'http://localhost:5173/ipn',
-        cus_name: user.name,
-        cus_email: user.email,
-        cus_add1: user.address,
-        cus_country: 'Bangladesh',
-        cus_phone: user.mobile,
-    };
-    const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live)
-    sslcz.init(data).then(apiResponse => {
-        // Redirect the user to payment gateway
-        let GatewayPageURL = apiResponse.GatewayPageURL? apiResponse.GatewayPageURL:"http://localhost:5173/"
-        console.log('Redirecting to: ', GatewayPageURL)
-        res.status(200).json({
-            url: GatewayPageURL,
-        })
-    });
+        const user = req.body;
+        const data = {
+            total_amount: Number(user.payamount),
+            currency: 'BDT',
+            tran_id, // use unique tran_id for each API call
+            success_url: 'http://localhost:5173/success',
+            fail_url: 'http://localhost:5173/fail',
+            cancel_url: 'http://localhost:5173/cancel',
+            ipn_url: 'http://localhost:5173/ipn',
+            cus_name: user.name,
+            cus_email: user.email,
+            cus_add1: user.address,
+            cus_country: 'Bangladesh',
+            cus_phone: user.mobile,
+            shipping_method: 'NO',
+            product_name: 'Book',
+            product_category: 'Book',
+            product_profile: 'general',
+        };
+
+        const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
+        const apiResponse = await sslcz.init(data);
+
+        if (apiResponse && apiResponse.GatewayPageURL) {
+            let GatewayPageURL = apiResponse.GatewayPageURL;
+            console.log('Redirecting to:', GatewayPageURL);
+            res.status(200).json({
+                url: GatewayPageURL,
+            });
+        } else {
+            console.error('Failed to get GatewayPageURL from API response:', apiResponse);
+            res.status(500).json({
+                errors: {
+                    common: {
+                        msg: "Failed to initiate payment",
+                    }
+                }
+            });
+        }
     } catch (error) {
-        console.log(error);
+        console.error('Error occurred during payment initiation:', error);
         res.status(500).json({
             errors: {
                 common: {
-                    msg: "Unknown error occured",
+                    msg: "Unknown error occurred",
                 }
             }
-        })
+        });
+    }
+}
+    *****************************************************************/
+
+
+
+
+
+/********************************************************************/
+
+const https = require('https');
+const querystring = require('querystring');
+
+async function paycollateral(req, res) {
+    const store_id = process.env.store_id;
+    const store_passwd = process.env.store_passwd;
+    const is_live = false; // true for live, false for sandbox
+
+    const tran_id = createRandomString(34);
+    console.log('Generated tran_id:', tran_id);
+
+    try {
+        const user = req.body;
+        const data = {
+            store_id: store_id,
+            store_passwd: store_passwd,
+            total_amount: Number(user.payamount),
+            currency: 'BDT',
+            tran_id: tran_id, // use unique tran_id for each API call
+            success_url: `http://localhost:5173/info?type=payment_success&tranid=${tran_id}`,
+            fail_url: 'http://localhost:5173/fail',
+            cancel_url: 'http://localhost:5173/cancel',
+            ipn_url: 'https://f7b6-103-230-107-41.ngrok-free.app/ipn',
+            cus_name: user.name,
+            cus_email: user.email,
+            cus_add1: user.address,
+            cus_city: 'Rajshahi',
+            cus_country: 'Bangladesh',
+            cus_phone: user.mobile,
+            shipping_method: 'NO',
+            product_name: 'Book',
+            product_category: 'Book',
+            product_profile: 'general'
+        };
+
+        const postData = querystring.stringify(data);
+
+        const options = {
+            hostname: is_live ? 'securepay.sslcommerz.com' : 'sandbox.sslcommerz.com',
+            path: '/gwprocess/v4/api.php',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Length': postData.length
+            }
+        };
+
+        const apiRequest = https.request(options, (apiResponse) => {
+            let responseData = '';
+
+            apiResponse.on('data', (chunk) => {
+                responseData += chunk;
+            });
+
+            apiResponse.on('end', () => {
+                const jsonResponse = JSON.parse(responseData);
+
+                if (jsonResponse && jsonResponse.GatewayPageURL) {
+                    let GatewayPageURL = jsonResponse.GatewayPageURL;
+                    console.log('Redirecting to:', GatewayPageURL);
+                    res.status(200).json({
+                        url: GatewayPageURL,
+                    });
+                } else {
+                    console.error('Failed to get GatewayPageURL from API response:', jsonResponse);
+                    res.status(500).json({
+                        errors: {
+                            common: {
+                                msg: "Failed to initiate payment",
+                            }
+                        }
+                    });
+                }
+            });
+        });
+
+        apiRequest.on('error', (error) => {
+            console.error('Error during API request:', error);
+            res.status(500).json({
+                errors: {
+                    common: {
+                        msg: "API request failed",
+                    }
+                }
+            });
+        });
+
+        apiRequest.write(postData);
+        apiRequest.end();
+    } catch (error) {
+        console.error('Error occurred during payment initiation:', error);
+        res.status(500).json({
+            errors: {
+                common: {
+                    msg: "Unknown error occurred",
+                }
+            }
+        });
     }
 }
 
+
+/********************************************************************/
 // function for storing book into warhouse
 async function storeBooksIntoWarhouse(req, res) {
     const {book_ids} = req.body;

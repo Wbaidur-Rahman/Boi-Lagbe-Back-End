@@ -26,6 +26,7 @@ const rentRequestRouter = require('./routers/rentRequestRouter');
 const notificationRouter = require('./routers/notificationRouter');
 const adminRouter = require('./routers/adminRouter');
 const reviewRouter = require('./routers/reviewRouter');
+const paymentRouter = require('./routers/paymentRouter');
 
 const app = express();
 dotenv.config();
@@ -68,6 +69,7 @@ app.use('/rentrequest', rentRequestRouter);
 app.use('/notification', notificationRouter);
 app.use('/admin', adminRouter);
 app.use('/reviews', reviewRouter);
+app.use('/payment', paymentRouter);
 
 // error handling
 // 404 not Found handler
@@ -83,3 +85,4 @@ app.get('/', (req, res) => {
 app.listen(process.env.PORT, () => {
     console.log(`App is listening on port ${process.env.PORT}`);
 });
+
