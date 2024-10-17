@@ -1,6 +1,5 @@
 # Peer-to-Peer Book Rental System - Back End
 
-Hi I am shishir
 This repository contains the back-end code for the **Peer-to-Peer Book Rental System**, built using **Node.js** and **Express.js**.
 
 ## Features
